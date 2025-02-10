@@ -248,7 +248,7 @@ public class Main{
     // notAlone([1, 2, 3, 2, 5, 2], 2) → [1, 3, 3, 5, 5, 5]
     // notAlone([3, 4], 3) → [4,4]
     public static ArrayList<Integer> notAlone(ArrayList<Integer> list, int val){
-        ArrayList<Integer> aloneIndices = new ArrayList<Integer>();
+        ArrayList<Integer> alone = new ArrayList<Integer>();
 
         if (list.size() == 2)
         {
@@ -305,26 +305,25 @@ public class Main{
             {
                 if (!((list.get(i - 1) == val) || (list.get(i + 1) == val)))
                 {
-                    aloneIndices.add(i);
+                    alone.add(i);
                 }
             }
         }
 
-        for (int i = 0; i < aloneIndices.size(); i++)
+        for (int i = 0; i < alone.size(); i++)
         {
-            int index = aloneIndices.get(i);
-            int listBefore = list.get(index - 1);
-            int listAfter = list.get(index + 1);
+            int idx = alone.get(i);
+            int listBefore = list.get(idx - 1);
+            int listAfter = list.get(idx + 1);
             if (listBefore > listAfter)
             {
-                list.set(index, listBefore);
+                list.set(idx, listBefore);
             }
             if (listBefore < listAfter)
             {
-                list.set(index, listAfter);
+                list.set(idx, listAfter);
             }
         }
-        System.out.println(aloneIndices);
         return list;
 
     }
