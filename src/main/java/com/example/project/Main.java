@@ -89,9 +89,20 @@ public class Main{
    */
 
     public static ArrayList<String> parseSentence(String sentence){
-        return new ArrayList<String>();
-    }
+        ArrayList<String> result = new ArrayList<String>();
 
+        int start = 0;
+        for (int i = 0; i < sentence.length(); i ++) {
+            if (sentence.substring(i, i + 1).equals(" ")) {
+                result.add(sentence.substring(start, i));
+                start = i + 1;
+            }
+        }
+
+        result.add(sentence.substring(start));
+
+        return result;
+    }
 
 
     /** Moves all words in wordList that begin with "b" to the front of
@@ -144,7 +155,16 @@ public class Main{
      *  @param intList  intList of Integers
      */
     public static ArrayList<Integer> removeDuplicates(ArrayList<Integer> intList){
+        for (int i = intList.size() - 1; i >= 0; i --) {
+            Integer current = intList.get(i);
 
+            for (int j = 0; j < i; j ++) {
+                if (intList.get(j).equals(current)) {
+                    intList.remove(i);
+                    break;
+                }
+            }
+        }
         return intList;
     }
 
@@ -228,27 +248,98 @@ public class Main{
     // notAlone([1, 2, 3, 2, 5, 2], 2) → [1, 3, 3, 5, 5, 5]
     // notAlone([3, 4], 3) → [4,4]
     public static ArrayList<Integer> notAlone(ArrayList<Integer> list, int val){
-        return list;
-    }
+        ArrayList<Integer> aloneIndices = new ArrayList<Integer>();
 
+        if (list.size() == 2)
+        {
+            int notValue = 0;
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list.get(i) != val)
+                {
+                    notValue = list.get(i);
+                }
+            }
 
-
-    // Return an array that is "left shifted" by one -- so {6, 2, 5, 3} returns {2, 5, 3, 6}. 
-    // You may modify and return the given array;
-    // shiftLeft([6, 2, 5, 3]) → [2, 5, 3, 6]
-    // shiftLeft([1, 2]) → [2, 1]
-    // shiftLeft([1]) → [1]
-
-    public static ArrayList<Integer> shiftLeft(ArrayList<Integer> list){
-        if (list.size() == 1) {
-            return list;
+            for (int i = 0; i < list.size(); i++)
+            {
+                if (list.get(i) == val)
+                {
+                    list.set(i, notValue);
+                }
+            }
         }
-        int temp = list.get(0);
-        list.remove(0);
-        list.add(temp);
+
+        if (!((list.get(list.size() - 1) == val) || (list.get(1) == val)))
+        {
+            int endList = list.get(list.size() - 1);
+            int oneAfterStart = list.get(1);
+            if (oneAfterStart > endList)
+            {
+                list.set(0, oneAfterStart);
+            }
+            if (oneAfterStart < endList)
+            {
+                list.set(0, endList);
+            }
+        }
+
+
+        if (!((list.get(list.size() - 2) == val) || (list.get(0) == val)))
+        {
+            int startList = list.get(0);
+            int oneBeforeEnd = list.get(list.size() - 2);
+            if (oneBeforeEnd > startList)
+            {
+                list.set(list.size() - 1, oneBeforeEnd);
+            }
+            else if (oneBeforeEnd < startList)
+            {
+                list.set(list.size() - 1, startList);
+            }
+        }
+
+        for (int i = 1; i < list.size() - 1; i++)
+        {
+            if (list.get(i) == val)
+            {
+                if (!((list.get(i - 1) == val) || (list.get(i + 1) == val)))
+                {
+                    aloneIndices.add(i);
+                }
+            }
+        }
+
+        for (int i = 0; i < aloneIndices.size(); i++)
+        {
+            int index = aloneIndices.get(i);
+            int listBefore = list.get(index - 1);
+            int listAfter = list.get(index + 1);
+            if (listBefore > listAfter)
+            {
+                list.set(index, listBefore);
+            }
+            if (listBefore < listAfter)
+            {
+                list.set(index, listAfter);
+            }
+        }
+        System.out.println(aloneIndices);
         return list;
+
     }
     
+    //Description:
+    // This method performs a "left shift" on the list (list), moving the first element to the end of the list. The original list is modified.
+    // Example:
+    // If list = [1, 2, 3, 4], the method modifies the list to [2, 3, 4, 1].
+    public static ArrayList<Integer> shiftLeft(ArrayList<Integer> list)
+    {
+        Integer i = list.get(0) ;
+        list.remove(list.get(0));
+        list.add(list.size(), i);
+        return list;
+    }
 
 
     // Return an array that contains exactly the same numbers as the given array, 
@@ -260,7 +351,25 @@ public class Main{
     // fix34([3, 2, 2, 4]) → [3, 4, 2, 2]
 
     public static ArrayList<Integer> fix34(ArrayList<Integer> list){
-        return list;
+        ArrayList<Integer> result = new ArrayList<Integer>(list);
+        ArrayList<Integer> fourIdx = new ArrayList<Integer>();
+
+        for (int i = 0; i < result.size(); i ++) {
+            if (result.get(i) == 4) {
+                fourIdx.add(i);
+            }
+        }
+
+        int fours = 0;
+        for (int i = 0; i < result.size(); i ++) {
+            if (result.get(i) == 3) {
+                int temp = result.get(i + 1);
+                result.set(i + 1, 4);
+                result.set(fourIdx.get(fours), temp);
+                fours ++;
+            }
+        }
+        return result;
     }
 
 
@@ -280,7 +389,7 @@ public class Main{
    *  then numList contains two modes: 2, 5
    *  and this method returns an arraylist containing 2 and 5 (in any order)
    *
-   *  If numList is: [1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6],
+   *  If numList is: [1, 1, 2, 2, 3, 3, 4, 4, 35, 5, 6, 6],
    *  then numList contains no mode because all values appear the same number of times
    *  and this method returns an empty arrayList: []
    *
@@ -290,6 +399,56 @@ public class Main{
    *  @param numList  numList of ints
    */
     public static ArrayList<Integer> modes(int[] numList){
-        return new ArrayList<Integer>();
+        ArrayList<Integer> modes = new ArrayList<Integer>();
+        int [] count = new int[numList.length];
+
+        for (int i = 0; i < numList.length; i ++) {
+            int current = numList[i]; 
+            for (int j = 0; j < numList.length; j ++) {
+                if (current == numList[j]) {
+                    count[i]++;
+                }
+            }
+        } 
+
+        int maxCount = 0;
+        boolean allSameCount = true;
+
+        if (numList.length > 0) {
+            maxCount = count[0];
+        }
+
+        for (int i = 0; i < numList.length; i ++) {
+            if (count[i] > maxCount) {
+                maxCount = count[i];
+            }
+        }
+
+        for (int i = 0; i < numList.length; i ++) {
+            if (count[i] != maxCount && count[i] != 0) {
+                allSameCount = false;
+                break;
+            }
+        }
+
+        if (allSameCount && numList.length > 0) {
+            return new ArrayList<>();
+        }
+
+        for (int i = 0; i < numList.length; i ++) {
+            if (count[i] == maxCount) {
+                boolean alreadyAdded = false;
+                for (int mode : modes) {
+                    if (mode == numList[i]) {
+                        alreadyAdded = true;
+                        break;
+                    }
+                }
+                if (!alreadyAdded) {
+                    modes.add(numList[i]);
+                }
+            }
+        }
+        return modes;
     }
 }
